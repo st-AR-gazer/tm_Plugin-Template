@@ -28,6 +28,36 @@ enum LogLevel {
     Critical
 };
 
+// ********** Settings **********
+
+//////////// CHANGE TO "true" ON RELEASE  ////////////
+[Setting category="z~DEV" name="Show default OP logs" hidden]
+bool S_showDefaultLogs = false;
+//////////////////////////////////////////////////////
+
+[Setting category="z~DEV" name="Show Debug logs" hidden]
+bool DEV_S_sDebug = true;
+[Setting category="z~DEV" name="Show Info logs (INFO)" hidden]
+bool DEV_S_sInfo = true;
+[Setting category="z~DEV" name="Show InfoG logs (INFO-G)" hidden]
+bool DEV_S_sNotice = true;
+[Setting category="z~DEV" name="Show Warn logs (WARN)" hidden]
+bool DEV_S_sWarn = true;
+[Setting category="z~DEV" name="Show Error logs (ERROR)" hidden]
+bool DEV_S_sError = true;
+[Setting category="z~DEV" name="Show Critical logs (CRITICAL)" hidden]
+bool DEV_S_sCritical = true;
+
+[Setting category="z~DEV" name="Set log level" min="0" max="5" hidden]
+int DEV_S_sLogLevelSlider = 0;
+
+[Setting category="z~DEV" name="Show function name in logs" hidden]
+bool S_showFunctionNameInLogs = true;
+[Setting category="z~DEV" name="Set max function name length in logs" min="0" max="50" hidden]
+int S_maxFunctionNameLength = 15;
+
+int lastSliderValue = DEV_S_sLogLevelSlider;
+
 namespace DEV {
     [SettingsTab name="Logs" icon="DevTo" order="99999999999999999999999999999999999999999999999999"]
     void RT_LOGs() {
@@ -41,7 +71,23 @@ namespace DEV {
             DEV_S_sNotice = UI::Checkbox("Show InfoG logs (INFO-G)", DEV_S_sNotice);
             DEV_S_sWarn = UI::Checkbox("Show Warn logs (WARN)", DEV_S_sWarn);
             DEV_S_sError = UI::Checkbox("Show Error logs (ERROR)", DEV_S_sError);
-            DEV_S_sCritical = UI::Checkbox("Show Test logs (TEST)", DEV_S_sCritical);
+            DEV_S_sCritical = UI::Checkbox("Show Critical logs (CRITICAL)", DEV_S_sCritical);
+
+            int newSliderValue = UI::SliderInt("Set log level", DEV_S_sLogLevelSlider, 0, 5);
+            
+            if (newSliderValue != DEV_S_sLogLevelSlider) {
+                DEV_S_sLogLevelSlider = newSliderValue;
+                lastSliderValue       = newSliderValue;
+
+                switch (DEV_S_sLogLevelSlider) {
+                    case 0: DEV_S_sDebug = true; DEV_S_sInfo = true; DEV_S_sNotice = true; DEV_S_sWarn = true; DEV_S_sError = true; DEV_S_sCritical = true; break;
+                    case 1: DEV_S_sDebug = false; DEV_S_sInfo = true; DEV_S_sNotice = true; DEV_S_sWarn = true; DEV_S_sError = true; DEV_S_sCritical = true; break;
+                    case 2: DEV_S_sDebug = false; DEV_S_sInfo = false; DEV_S_sNotice = true; DEV_S_sWarn = true; DEV_S_sError = true; DEV_S_sCritical = true; break;
+                    case 3: DEV_S_sDebug = false; DEV_S_sInfo = false; DEV_S_sNotice = false; DEV_S_sWarn = true; DEV_S_sError = true; DEV_S_sCritical = true; break;
+                    case 4: DEV_S_sDebug = false; DEV_S_sInfo = false; DEV_S_sNotice = false; DEV_S_sWarn = false; DEV_S_sError = true; DEV_S_sCritical = true; break;
+                    case 5: DEV_S_sDebug = false; DEV_S_sInfo = false; DEV_S_sNotice = false; DEV_S_sWarn = false; DEV_S_sError = false; DEV_S_sCritical = true; break;
+                }
+            }
 
             UI::Separator();
             UI::Text("Function Name Settings");
@@ -53,31 +99,6 @@ namespace DEV {
         }
     }
 }
-
-// ********** Hidden Settings **********
-
-//////////// CHANGE TO "true" ON RELEASE  ////////////
-[Setting category="z~DEV" name="Show default OP logs" hidden]
-bool S_showDefaultLogs = true;
-//////////////////////////////////////////////////////
-
-[Setting category="z~DEV" name="Show Debug logs" hidden]
-bool DEV_S_sDebug = true;
-[Setting category="z~DEV" name="Show Info logs (INFO)" hidden]
-bool DEV_S_sInfo = true;
-[Setting category="z~DEV" name="Show InfoG logs (INFO-G)" hidden]
-bool DEV_S_sNotice = true;
-[Setting category="z~DEV" name="Show Warn logs (WARN)" hidden]
-bool DEV_S_sWarn = true;
-[Setting category="z~DEV" name="Show Error logs (ERROR)" hidden]
-bool DEV_S_sError = true;
-[Setting category="z~DEV" name="Show Test logs (TEST)" hidden]
-bool DEV_S_sCritical = true;
-
-[Setting category="z~DEV" name="Show function name in logs" hidden]
-bool S_showFunctionNameInLogs = true;
-[Setting category="z~DEV" name="Set max function name length in logs" min="0" max="50" hidden]
-int S_maxFunctionNameLength = 15;
 
 // ********** Logging Function **********
 
@@ -115,7 +136,6 @@ void log(const string &in msg, LogLevel level = LogLevel::Info, int line = -1, s
         case LogLevel::Critical: doLog = DEV_S_sCritical;    break;
     }
 
-    if (!S_showDefaultLogs) return;
     if (!S_showFunctionNameInLogs) {_functionName = "";}
 
     if (doLog) {
