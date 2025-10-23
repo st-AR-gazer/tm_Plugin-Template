@@ -23,6 +23,15 @@ namespace _Text {
         }
         return index;
     }
+
+    // ty XertroV
+    string GetRandomIcon(const string &in hash) {
+        auto icons = Icons::GetAll();
+        auto iconKeys = icons.GetKeys();
+        if (hash.Length < 16) log("Hash must be at least 16 hex characters long.", LogLevel::Error, 84, "GetRandomIcon");
+        auto n = Text::ParseUInt(hash.SubStr(4, 4), 16);
+        return string(icons[iconKeys[n % iconKeys.Length]]);
+    }
 }
 
 namespace _IO {
