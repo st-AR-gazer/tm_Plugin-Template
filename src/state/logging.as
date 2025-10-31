@@ -3,11 +3,11 @@ string pluginName = Meta::ExecutingPlugin().Name;
 void NotifyDebug   (const string &in msg="", const string &in pn=pluginName, int t=6000){ UI::ShowNotification(pn, msg, vec4(.5,.5,.5,.3), t); }
 void NotifyInfo    (const string &in msg="", const string &in pn=pluginName, int t=6000){ UI::ShowNotification(pn, msg, vec4(.2,.8,.5,.3), t); }
 void NotifyNotice  (const string &in msg="", const string &in pn=pluginName, int t=6000){ UI::ShowNotification(pn, msg, vec4(.2,.8,.5,.3), t); }
-void NotifyWarn    (const string &in msg="", const string &in pn=pluginName, int t=6000){ UI::ShowNotification(pn, msg, vec4(1,.5,.1,.5), t); }
+void NotifyWarning (const string &in msg="", const string &in pn=pluginName, int t=6000){ UI::ShowNotification(pn, msg, vec4(1,.5,.1,.5), t); }
 void NotifyError   (const string &in msg="", const string &in pn=pluginName, int t=6000){ UI::ShowNotification(pn, msg, vec4(1,.2,.2,.3), t); }
 void NotifyCritical(const string &in msg="", const string &in pn=pluginName, int t=6000){ UI::ShowNotification(pn, msg, vec4(1,.2,.2,.3), t); }
 
-enum LogLevel { Debug, Info, Notice, Warn, Error, Critical, Custom }
+enum LogLevel { Debug, Info, Notice, Warning, Error, Critical, Custom }
 
 namespace logging {
 
@@ -23,7 +23,7 @@ namespace logging {
     [Setting category="z~DEV" name="Show Debug logs"    hidden] bool DEV_S_sDebug    = true;
     [Setting category="z~DEV" name="Show Info logs"     hidden] bool DEV_S_sInfo     = true;
     [Setting category="z~DEV" name="Show Notice logs"   hidden] bool DEV_S_sNotice   = true;
-    [Setting category="z~DEV" name="Show Warn logs"     hidden] bool DEV_S_sWarn     = true;
+    [Setting category="z~DEV" name="Show Warning logs" hidden] bool DEV_S_sWarning  = true;
     [Setting category="z~DEV" name="Show Error logs"    hidden] bool DEV_S_sError    = true;
     [Setting category="z~DEV" name="Show Critical logs" hidden] bool DEV_S_sCritical = true;
 
@@ -53,7 +53,7 @@ namespace logging {
             DEV_S_sDebug      = UI::Checkbox("Show Debug logs",      DEV_S_sDebug);
             DEV_S_sInfo       = UI::Checkbox("Show Info logs",       DEV_S_sInfo);
             DEV_S_sNotice     = UI::Checkbox("Show Notice logs",     DEV_S_sNotice);
-            DEV_S_sWarn       = UI::Checkbox("Show Warn logs",       DEV_S_sWarn);
+            DEV_S_sWarning    = UI::Checkbox("Show Warning logs",    DEV_S_sWarning);
             DEV_S_sError      = UI::Checkbox("Show Error logs",      DEV_S_sError);
             DEV_S_sCritical   = UI::Checkbox("Show Critical logs",   DEV_S_sCritical);
 
@@ -63,12 +63,12 @@ namespace logging {
                 lastSliderValue       = newSlider;
 
                 switch (DEV_S_sLogLevelSlider) {
-                    case 0: DEV_S_sDebug=true;  DEV_S_sCustom=true;  DEV_S_sInfo=true;  DEV_S_sNotice=true;  DEV_S_sWarn=true;  DEV_S_sError=true; DEV_S_sCritical=true; break;
-                    case 1: DEV_S_sDebug=false; DEV_S_sCustom=true;  DEV_S_sInfo=true;  DEV_S_sNotice=true;  DEV_S_sWarn=true;  DEV_S_sError=true; DEV_S_sCritical=true; break;
-                    case 2: DEV_S_sDebug=false; DEV_S_sCustom=false; DEV_S_sInfo=true;  DEV_S_sNotice=true;  DEV_S_sWarn=true;  DEV_S_sError=true; DEV_S_sCritical=true; break;
-                    case 3: DEV_S_sDebug=false; DEV_S_sCustom=false; DEV_S_sInfo=false; DEV_S_sNotice=true;  DEV_S_sWarn=true;  DEV_S_sError=true; DEV_S_sCritical=true; break;
-                    case 4: DEV_S_sDebug=false; DEV_S_sCustom=false; DEV_S_sInfo=false; DEV_S_sNotice=false; DEV_S_sWarn=true;  DEV_S_sError=true; DEV_S_sCritical=true; break;
-                    case 5: DEV_S_sDebug=false; DEV_S_sCustom=false; DEV_S_sInfo=false; DEV_S_sNotice=false; DEV_S_sWarn=false; DEV_S_sError=true; DEV_S_sCritical=true; break;
+                    case 0: DEV_S_sDebug=true;  DEV_S_sCustom=true;  DEV_S_sInfo=true;  DEV_S_sNotice=true;  DEV_S_sWarning=true;  DEV_S_sError=true; DEV_S_sCritical=true; break;
+                    case 1: DEV_S_sDebug=false; DEV_S_sCustom=true;  DEV_S_sInfo=true;  DEV_S_sNotice=true;  DEV_S_sWarning=true;  DEV_S_sError=true; DEV_S_sCritical=true; break;
+                    case 2: DEV_S_sDebug=false; DEV_S_sCustom=false; DEV_S_sInfo=true;  DEV_S_sNotice=true;  DEV_S_sWarning=true;  DEV_S_sError=true; DEV_S_sCritical=true; break;
+                    case 3: DEV_S_sDebug=false; DEV_S_sCustom=false; DEV_S_sInfo=false; DEV_S_sNotice=true;  DEV_S_sWarning=true;  DEV_S_sError=true; DEV_S_sCritical=true; break;
+                    case 4: DEV_S_sDebug=false; DEV_S_sCustom=false; DEV_S_sInfo=false; DEV_S_sNotice=false; DEV_S_sWarning=true;  DEV_S_sError=true; DEV_S_sCritical=true; break;
+                    case 5: DEV_S_sDebug=false; DEV_S_sCustom=false; DEV_S_sInfo=false; DEV_S_sNotice=false; DEV_S_sWarning=false; DEV_S_sError=true; DEV_S_sCritical=true; break;
                 }
             }
 
@@ -184,8 +184,8 @@ void log(const string &in msg,
     while (_fnName.Length < logging::S_maxFunctionNameLength) { _fnName += " "; }
     if (!logging::S_showFunctionNameInLogs) _fnName = "";
 
-    array<string> tags =   { "\\$0ff[DEBUG]  ", "\\$0f0[INFO]   ", "\\$0ff[NOTICE] ", "\\$ff0[WARN]   ", "\\$f00[ERROR]  ", "\\$f00\\$o\\$i\\$w[CRITICAL] " };
-    array<string> bodies = { "\\$0cc",          "\\$0c0",          "\\$0cc",          "\\$cc0",          "\\$c00",          "\\$f00\\$o\\$i\\$w" };
+    array<string> tags =   { "\\$0ff[DEBUG]  ", "\\$0f0[INFO]   ", "\\$0ff[NOTICE] ", "\\$ff0[WARNING] ", "\\$f00[ERROR]  ", "\\$f00\\$o\\$i\\$w[CRITICAL] " };
+    array<string> bodies = { "\\$0cc",          "\\$0c0",          "\\$0cc",          "\\$cc0",           "\\$c00",          "\\$f00\\$o\\$i\\$w" };
 
     string prefix, body;
     if (level == LogLevel::Custom) {
@@ -203,14 +203,14 @@ void log(const string &in msg,
 
     array<bool> enabled = {
         logging::DEV_S_sDebug, logging::DEV_S_sInfo,  logging::DEV_S_sNotice,
-        logging::DEV_S_sWarn,  logging::DEV_S_sError, logging::DEV_S_sCritical
+        logging::DEV_S_sWarning,  logging::DEV_S_sError, logging::DEV_S_sCritical
     };
     if (level != LogLevel::Custom && !enabled[int(level)]) return;
     if (level == LogLevel::Custom && !logging::DEV_S_sCustom) return;
 
     if (logging::S_showDefaultLogs && level != LogLevel::Custom) {
         switch (level) {
-            case LogLevel::Warn:     warn(msg);  break;
+            case LogLevel::Warning:     warn(msg);  break;
             case LogLevel::Error:
             case LogLevel::Critical: error(msg); break;
             default:                 trace(msg); break;
