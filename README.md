@@ -1,14 +1,20 @@
 ![Signed](https://img.shields.io/badge/Signed-No-FF3333)
 ![Trackmania2020](https://img.shields.io/badge/Game-Trackmania-blue)
 
-# Title
+# <PluginTemplate>
 
-description
+stuff
 
-## ⚠️ Important Notes
+## Layout
 
-- 
+stuff 2
 
-### Credits
+## Build
 
-- ar
+```powershell
+python _build.py
+```
+
+## Credits
+
+ar

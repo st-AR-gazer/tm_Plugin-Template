@@ -1,8 +1,9 @@
 [meta]
-name = ""
-author = "ar....."
+name = "!!!_PluginTemplate"
+author = "ar"
 version = "0.1.0"
-category = "!"
+category = "!!!_PluginTemplate"
 
 [script]
-optional_dependencies = [ "" ]
+dependencies = []
+optional_dependencies = []
